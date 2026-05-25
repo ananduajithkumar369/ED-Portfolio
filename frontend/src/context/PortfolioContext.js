@@ -137,14 +137,16 @@ const initialTestimonials = [
 ];
 
 const initialAnalyticsData = {
-  followers: { current: '42.8K', growth: '+15.2%', history: [
-    { name: 'Dec', followers: 28000, reach: 350000, engagement: 25000 },
-    { name: 'Jan', followers: 31000, reach: 480000, engagement: 32000 },
-    { name: 'Feb', followers: 34500, reach: 620000, engagement: 41000 },
-    { name: 'Mar', followers: 37800, reach: 790000, engagement: 49000 },
-    { name: 'Apr', followers: 40500, reach: 980000, engagement: 58000 },
-    { name: 'May', followers: 42800, reach: 1200000, engagement: 68000 },
-  ]},
+  followers: {
+    current: '42.8K', growth: '+15.2%', history: [
+      { name: 'Dec', followers: 28000, reach: 350000, engagement: 25000 },
+      { name: 'Jan', followers: 31000, reach: 480000, engagement: 32000 },
+      { name: 'Feb', followers: 34500, reach: 620000, engagement: 41000 },
+      { name: 'Mar', followers: 37800, reach: 790000, engagement: 49000 },
+      { name: 'Apr', followers: 40500, reach: 980000, engagement: 58000 },
+      { name: 'May', followers: 42800, reach: 1200000, engagement: 68000 },
+    ]
+  },
   kpis: [
     { label: 'Reel Reach', value: '1.2M', trend: '+28.4%', desc: 'Previous 30 Days' },
     { label: 'Avg Engagement Rate', value: '8.7%', trend: '+1.5%', desc: 'Industry avg: 4%' },
@@ -196,7 +198,7 @@ export const PortfolioProvider = ({ children }) => {
       if (storedChannels) setContactChannels(JSON.parse(storedChannels));
 
       // Fetch dynamic analytics from Django backend
-      fetch(`${API_BASE_URL}/api/analytics/kpis/`)
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analytics/kpis/`)
         .then(res => res.json())
         .then(data => {
           if (data && Array.isArray(data)) {
@@ -217,13 +219,13 @@ export const PortfolioProvider = ({ children }) => {
 
       // Fetch portfolio items from Django backend
       Promise.all([
-        fetch(`${API_BASE_URL}/api/portfolio/reels/`).then(res => res.json()).catch(() => null),
-        fetch(`${API_BASE_URL}/api/portfolio/socials/`).then(res => res.json()).catch(() => null),
-        fetch(`${API_BASE_URL}/api/portfolio/posters/`).then(res => res.json()).catch(() => null),
-        fetch(`${API_BASE_URL}/api/portfolio/projects/`).then(res => res.json()).catch(() => null),
-        fetch(`${API_BASE_URL}/api/portfolio/testimonials/`).then(res => res.json()).catch(() => null),
-        fetch(`${API_BASE_URL}/api/portfolio/milestones/`).then(res => res.json()).catch(() => null),
-        fetch(`${API_BASE_URL}/api/portfolio/contact-channels/`).then(res => res.json()).catch(() => null)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/portfolio/reels/`).then(res => res.json()).catch(() => null),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/portfolio/socials/`).then(res => res.json()).catch(() => null),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/portfolio/posters/`).then(res => res.json()).catch(() => null),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/portfolio/projects/`).then(res => res.json()).catch(() => null),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/portfolio/testimonials/`).then(res => res.json()).catch(() => null),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/portfolio/milestones/`).then(res => res.json()).catch(() => null),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/portfolio/contact-channels/`).then(res => res.json()).catch(() => null)
       ]).then(([reelsData, socialsData, postersData, projectsData, testimonialsData, milestonesData, channelsData]) => {
         if (reelsData && Array.isArray(reelsData) && reelsData.length > 0) {
           setReels(reelsData);
@@ -257,146 +259,146 @@ export const PortfolioProvider = ({ children }) => {
     }
   }, []);
 
-  // Save updates to localStorage Helper
-  const saveToStorage = (key, data) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(key, JSON.stringify(data));
-    }
-  };
+// Save updates to localStorage Helper
+const saveToStorage = (key, data) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+};
 
-  // Add Item
-  const addItem = (type, item) => {
-    const newItem = { id: `${type.slice(0,3)}-${Date.now()}`, ...item };
-    if (type === 'reels') {
-      const updated = [newItem, ...reels];
-      setReels(updated);
-      saveToStorage('anandu_reels', updated);
-    } else if (type === 'socials') {
-      const updated = [newItem, ...socials];
-      setSocials(updated);
-      saveToStorage('anandu_socials', updated);
-    } else if (type === 'posters') {
-      const updated = [newItem, ...posters];
-      setPosters(updated);
-      saveToStorage('anandu_posters', updated);
-    } else if (type === 'projects') {
-      const updated = [newItem, ...projects];
-      setProjects(updated);
-      saveToStorage('anandu_projects', updated);
-    } else if (type === 'testimonials') {
-      const updated = [newItem, ...testimonials];
-      setTestimonials(updated);
-      saveToStorage('anandu_testimonials', updated);
-    } else if (type === 'milestones') {
-      const updated = [newItem, ...milestones];
-      setMilestones(updated);
-      saveToStorage('anandu_milestones', updated);
-    }
-  };
+// Add Item
+const addItem = (type, item) => {
+  const newItem = { id: `${type.slice(0, 3)}-${Date.now()}`, ...item };
+  if (type === 'reels') {
+    const updated = [newItem, ...reels];
+    setReels(updated);
+    saveToStorage('anandu_reels', updated);
+  } else if (type === 'socials') {
+    const updated = [newItem, ...socials];
+    setSocials(updated);
+    saveToStorage('anandu_socials', updated);
+  } else if (type === 'posters') {
+    const updated = [newItem, ...posters];
+    setPosters(updated);
+    saveToStorage('anandu_posters', updated);
+  } else if (type === 'projects') {
+    const updated = [newItem, ...projects];
+    setProjects(updated);
+    saveToStorage('anandu_projects', updated);
+  } else if (type === 'testimonials') {
+    const updated = [newItem, ...testimonials];
+    setTestimonials(updated);
+    saveToStorage('anandu_testimonials', updated);
+  } else if (type === 'milestones') {
+    const updated = [newItem, ...milestones];
+    setMilestones(updated);
+    saveToStorage('anandu_milestones', updated);
+  }
+};
 
-  // Edit Item
-  const updateItem = (type, id, updatedFields) => {
-    if (type === 'reels') {
-      const updated = reels.map(r => r.id === id ? { ...r, ...updatedFields } : r);
-      setReels(updated);
-      saveToStorage('anandu_reels', updated);
-    } else if (type === 'socials') {
-      const updated = socials.map(s => s.id === id ? { ...s, ...updatedFields } : s);
-      setSocials(updated);
-      saveToStorage('anandu_socials', updated);
-    } else if (type === 'posters') {
-      const updated = posters.map(p => p.id === id ? { ...p, ...updatedFields } : p);
-      setPosters(updated);
-      saveToStorage('anandu_posters', updated);
-    } else if (type === 'projects') {
-      const updated = projects.map(p => p.id === id ? { ...p, ...updatedFields } : p);
-      setProjects(updated);
-      saveToStorage('anandu_projects', updated);
-    } else if (type === 'testimonials') {
-      const updated = testimonials.map(t => t.id === id ? { ...t, ...updatedFields } : t);
-      setTestimonials(updated);
-      saveToStorage('anandu_testimonials', updated);
-    } else if (type === 'milestones') {
-      const updated = milestones.map(m => m.id === id ? { ...m, ...updatedFields } : m);
-      setMilestones(updated);
-      saveToStorage('anandu_milestones', updated);
-    }
-  };
+// Edit Item
+const updateItem = (type, id, updatedFields) => {
+  if (type === 'reels') {
+    const updated = reels.map(r => r.id === id ? { ...r, ...updatedFields } : r);
+    setReels(updated);
+    saveToStorage('anandu_reels', updated);
+  } else if (type === 'socials') {
+    const updated = socials.map(s => s.id === id ? { ...s, ...updatedFields } : s);
+    setSocials(updated);
+    saveToStorage('anandu_socials', updated);
+  } else if (type === 'posters') {
+    const updated = posters.map(p => p.id === id ? { ...p, ...updatedFields } : p);
+    setPosters(updated);
+    saveToStorage('anandu_posters', updated);
+  } else if (type === 'projects') {
+    const updated = projects.map(p => p.id === id ? { ...p, ...updatedFields } : p);
+    setProjects(updated);
+    saveToStorage('anandu_projects', updated);
+  } else if (type === 'testimonials') {
+    const updated = testimonials.map(t => t.id === id ? { ...t, ...updatedFields } : t);
+    setTestimonials(updated);
+    saveToStorage('anandu_testimonials', updated);
+  } else if (type === 'milestones') {
+    const updated = milestones.map(m => m.id === id ? { ...m, ...updatedFields } : m);
+    setMilestones(updated);
+    saveToStorage('anandu_milestones', updated);
+  }
+};
 
-  // Delete Item
-  const deleteItem = (type, id) => {
-    if (type === 'reels') {
-      const updated = reels.filter(r => r.id !== id);
-      setReels(updated);
-      saveToStorage('anandu_reels', updated);
-    } else if (type === 'socials') {
-      const updated = socials.filter(s => s.id !== id);
-      setSocials(updated);
-      saveToStorage('anandu_socials', updated);
-    } else if (type === 'posters') {
-      const updated = posters.filter(p => p.id !== id);
-      setPosters(updated);
-      saveToStorage('anandu_posters', updated);
-    } else if (type === 'projects') {
-      const updated = projects.filter(p => p.id !== id);
-      setProjects(updated);
-      saveToStorage('anandu_projects', updated);
-    } else if (type === 'testimonials') {
-      const updated = testimonials.filter(t => t.id !== id);
-      setTestimonials(updated);
-      saveToStorage('anandu_testimonials', updated);
-    } else if (type === 'milestones') {
-      const updated = milestones.filter(m => m.id !== id);
-      setMilestones(updated);
-      saveToStorage('anandu_milestones', updated);
-    }
-  };
+// Delete Item
+const deleteItem = (type, id) => {
+  if (type === 'reels') {
+    const updated = reels.filter(r => r.id !== id);
+    setReels(updated);
+    saveToStorage('anandu_reels', updated);
+  } else if (type === 'socials') {
+    const updated = socials.filter(s => s.id !== id);
+    setSocials(updated);
+    saveToStorage('anandu_socials', updated);
+  } else if (type === 'posters') {
+    const updated = posters.filter(p => p.id !== id);
+    setPosters(updated);
+    saveToStorage('anandu_posters', updated);
+  } else if (type === 'projects') {
+    const updated = projects.filter(p => p.id !== id);
+    setProjects(updated);
+    saveToStorage('anandu_projects', updated);
+  } else if (type === 'testimonials') {
+    const updated = testimonials.filter(t => t.id !== id);
+    setTestimonials(updated);
+    saveToStorage('anandu_testimonials', updated);
+  } else if (type === 'milestones') {
+    const updated = milestones.filter(m => m.id !== id);
+    setMilestones(updated);
+    saveToStorage('anandu_milestones', updated);
+  }
+};
 
-  // Update Analytics
-  const updateAnalytics = (newKpis, newHistory) => {
-    const updated = {
-      ...analyticsData,
-      kpis: newKpis || analyticsData.kpis,
-      followers: newHistory ? { ...analyticsData.followers, history: newHistory } : analyticsData.followers
-    };
-    setAnalyticsData(updated);
-    saveToStorage('anandu_analytics', updated);
+// Update Analytics
+const updateAnalytics = (newKpis, newHistory) => {
+  const updated = {
+    ...analyticsData,
+    kpis: newKpis || analyticsData.kpis,
+    followers: newHistory ? { ...analyticsData.followers, history: newHistory } : analyticsData.followers
   };
+  setAnalyticsData(updated);
+  saveToStorage('anandu_analytics', updated);
+};
 
-  // Add Contact Submission
-  const addContactSubmission = (submission) => {
-    const newSub = { id: `contact-${Date.now()}`, date: new Date().toLocaleDateString(), ...submission };
-    const updated = [newSub, ...contactSubmissions];
-    setContactSubmissions(updated);
-    saveToStorage('anandu_contacts', updated);
-  };
+// Add Contact Submission
+const addContactSubmission = (submission) => {
+  const newSub = { id: `contact-${Date.now()}`, date: new Date().toLocaleDateString(), ...submission };
+  const updated = [newSub, ...contactSubmissions];
+  setContactSubmissions(updated);
+  saveToStorage('anandu_contacts', updated);
+};
 
-  // Get aggregated works list grouped or filtered
-  const getAllWorks = () => {
-    return [...reels, ...socials, ...posters];
-  };
+// Get aggregated works list grouped or filtered
+const getAllWorks = () => {
+  return [...reels, ...socials, ...posters];
+};
 
-  return (
-    <PortfolioContext.Provider value={{
-      reels,
-      socials,
-      posters,
-      projects,
-      testimonials,
-      milestones,
-      contactChannels,
-      analyticsData,
-      contactSubmissions,
-      addItem,
-      updateItem,
-      deleteItem,
-      updateAnalytics,
-      addContactSubmission,
-      getAllWorks
-    }}>
-      {children}
-    </PortfolioContext.Provider>
-  );
+return (
+  <PortfolioContext.Provider value={{
+    reels,
+    socials,
+    posters,
+    projects,
+    testimonials,
+    milestones,
+    contactChannels,
+    analyticsData,
+    contactSubmissions,
+    addItem,
+    updateItem,
+    deleteItem,
+    updateAnalytics,
+    addContactSubmission,
+    getAllWorks
+  }}>
+    {children}
+  </PortfolioContext.Provider>
+);
 };
 
 export const usePortfolio = () => {
