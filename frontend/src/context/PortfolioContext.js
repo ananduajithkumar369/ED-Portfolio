@@ -159,6 +159,8 @@ const initialAnalyticsData = {
   ]
 };
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+
 export const PortfolioProvider = ({ children }) => {
   const [reels, setReels] = useState(initialReels);
   const [socials, setSocials] = useState(initialSocials);
@@ -194,7 +196,7 @@ export const PortfolioProvider = ({ children }) => {
       if (storedChannels) setContactChannels(JSON.parse(storedChannels));
 
       // Fetch dynamic analytics from Django backend
-      fetch('http://127.0.0.1:8000/api/analytics/kpis/')
+      fetch(`${API_BASE_URL}/api/analytics/kpis/`)
         .then(res => res.json())
         .then(data => {
           if (data && Array.isArray(data)) {
@@ -215,13 +217,13 @@ export const PortfolioProvider = ({ children }) => {
 
       // Fetch portfolio items from Django backend
       Promise.all([
-        fetch('http://127.0.0.1:8000/api/portfolio/reels/').then(res => res.json()).catch(() => null),
-        fetch('http://127.0.0.1:8000/api/portfolio/socials/').then(res => res.json()).catch(() => null),
-        fetch('http://127.0.0.1:8000/api/portfolio/posters/').then(res => res.json()).catch(() => null),
-        fetch('http://127.0.0.1:8000/api/portfolio/projects/').then(res => res.json()).catch(() => null),
-        fetch('http://127.0.0.1:8000/api/portfolio/testimonials/').then(res => res.json()).catch(() => null),
-        fetch('http://127.0.0.1:8000/api/portfolio/milestones/').then(res => res.json()).catch(() => null),
-        fetch('http://127.0.0.1:8000/api/portfolio/contact-channels/').then(res => res.json()).catch(() => null)
+        fetch(`${API_BASE_URL}/api/portfolio/reels/`).then(res => res.json()).catch(() => null),
+        fetch(`${API_BASE_URL}/api/portfolio/socials/`).then(res => res.json()).catch(() => null),
+        fetch(`${API_BASE_URL}/api/portfolio/posters/`).then(res => res.json()).catch(() => null),
+        fetch(`${API_BASE_URL}/api/portfolio/projects/`).then(res => res.json()).catch(() => null),
+        fetch(`${API_BASE_URL}/api/portfolio/testimonials/`).then(res => res.json()).catch(() => null),
+        fetch(`${API_BASE_URL}/api/portfolio/milestones/`).then(res => res.json()).catch(() => null),
+        fetch(`${API_BASE_URL}/api/portfolio/contact-channels/`).then(res => res.json()).catch(() => null)
       ]).then(([reelsData, socialsData, postersData, projectsData, testimonialsData, milestonesData, channelsData]) => {
         if (reelsData && Array.isArray(reelsData) && reelsData.length > 0) {
           setReels(reelsData);
