@@ -27,7 +27,23 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-p=a026jy3$9hacu@__zg-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'ed-portfolio-rdd3.onrender.com,localhost,127.0.0.1').split(',')
+# Robustly parse ALLOWED_HOSTS to strip any spaces or accidental https:// prefixes
+raw_allowed_hosts = os.environ.get('ALLOWED_HOSTS', 'ed-portfolio-rdd3.onrender.com,localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = []
+for host in raw_allowed_hosts:
+    host = host.strip()
+    if host.startswith('http://'):
+        host = host[7:]
+    if host.startswith('https://'):
+        host = host[8:]
+    host = host.rstrip('/')
+    if host:
+        ALLOWED_HOSTS.append(host)
+
+# Add Render external hostname if automatically provided
+render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if render_host:
+    ALLOWED_HOSTS.append(render_host)
 
 
 # Application definition
@@ -128,10 +144,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = os.environ.get(
+raw_cors = os.environ.get(
     'CORS_ALLOWED_ORIGINS',
     'https://ed-portfolio-gules.vercel.app,https://ed-portfolio-anandu-ajithkumars-projects.vercel.app,http://localhost:3000,http://127.0.0.1:3000'
 ).split(',')
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in raw_cors if origin.strip()]
+
+# It's also helpful to set CSRF_TRUSTED_ORIGINS just in case session auth is used on the API
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 import os
 MEDIA_URL = '/media/'
