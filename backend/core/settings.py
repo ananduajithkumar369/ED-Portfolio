@@ -20,6 +20,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 import os
+import cloudinary
+
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    secure=True
+)
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-p=a026jy3$9hacu@__zg-&%pb3b^%tmuquggmmwirla))ers!v')
@@ -155,18 +164,6 @@ CORS_ALLOWED_ORIGINS = [origin.strip() for origin in raw_cors if origin.strip()]
 # It's also helpful to set CSRF_TRUSTED_ORIGINS just in case session auth is used on the API
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
-import os
-
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Cloudinary Configuration
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '')
-}
 
 STORAGES = {
     "default": {
