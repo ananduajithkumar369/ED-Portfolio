@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { usePortfolio } from '@/context/PortfolioContext';
+import { getMediaUrl } from '@/utils/mediaUtils';
 
 // Animation variants
 const containerVariants = {
@@ -180,7 +181,7 @@ export default function HomePage() {
                   {hasVideo ? (
                     <video
                       className={`w-full h-full object-cover transition-transform duration-700 ${hoveredReel === reel.id ? 'scale-105' : 'opacity-80'}`}
-                      src={reel.video}
+                      src={getMediaUrl(reel.video)}
                       autoPlay={hoveredReel === reel.id}
                       loop
                       muted
@@ -195,7 +196,7 @@ export default function HomePage() {
                     />
                   ) : null}
                   <img
-                    src={reel.thumbnail}
+                    src={getMediaUrl(reel.thumbnail)}
                     alt={reel.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
                     style={{ display: hasVideo ? 'none' : 'block' }}
@@ -286,7 +287,7 @@ export default function HomePage() {
 
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border border-white/10">
-                    <img src={social.thumbnail} alt={social.title} className="w-full h-full object-cover" />
+                    <img src={getMediaUrl(social.thumbnail)} alt={social.title} className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h3 className="text-white font-bold uppercase text-sm group-hover:text-purple-400 transition-colors line-clamp-1">{social.title}</h3>
@@ -398,8 +399,12 @@ export default function HomePage() {
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-glow-blue opacity-0 group-hover:opacity-20 transition-opacity rounded-full -mr-16 -mt-16" />
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-purple-500/30 flex-shrink-0">
-                    <img src={testimonial.avatar || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150'} alt={testimonial.name} className="w-full h-full object-cover" />
+                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-purple-500/30 flex-shrink-0 bg-white/5 flex items-center justify-center">
+                    {testimonial.avatar ? (
+                      <img src={getMediaUrl(testimonial.avatar)} alt={testimonial.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-purple-400 font-bold text-xl uppercase">{testimonial.name.charAt(0)}</span>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2">
                     <h4 className="text-white text-lg font-bold uppercase tracking-wide">{testimonial.name}</h4>
@@ -463,7 +468,7 @@ export default function HomePage() {
               {!!(selectedMedia.video) ? (
                 <>
                   <video
-                    src={selectedMedia.video}
+                    src={getMediaUrl(selectedMedia.video)}
                     controls
                     autoPlay
                     className="w-full h-full object-contain"
@@ -475,7 +480,7 @@ export default function HomePage() {
                     }}
                   />
                   <img
-                    src={selectedMedia.thumbnail}
+                    src={getMediaUrl(selectedMedia.thumbnail)}
                     alt={selectedMedia.title}
                     className="w-full h-full object-contain"
                     style={{ display: 'none' }}
@@ -483,7 +488,7 @@ export default function HomePage() {
                 </>
               ) : (
                 <img
-                  src={selectedMedia.thumbnail}
+                  src={getMediaUrl(selectedMedia.thumbnail)}
                   alt={selectedMedia.title}
                   className="w-full h-full object-contain"
                 />

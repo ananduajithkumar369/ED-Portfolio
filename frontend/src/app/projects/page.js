@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePortfolio } from '@/context/PortfolioContext';
+import { getMediaUrl } from '@/utils/mediaUtils';
 import { 
   Code, Github, ExternalLink, Cpu, Database, 
   Terminal, Sparkles, FolderGit, Layout 
@@ -101,7 +102,7 @@ export default function ProjectsPage() {
                 {/* Visual Header / Image Preview with Overlay */}
                 <div className="h-44 relative bg-black overflow-hidden flex items-center justify-center">
                   <img 
-                    src={project.thumbnail} 
+                    src={getMediaUrl(project.thumbnail)} 
                     alt={project.title} 
                     className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
                   />

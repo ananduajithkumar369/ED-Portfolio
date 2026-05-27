@@ -5,7 +5,7 @@ import {
   Cpu, Video, Paintbrush, Code, Award, Target,
   Calendar, CheckCircle, Sparkles, BookOpen
 } from 'lucide-react';
-import { usePortfolio } from '../../context/PortfolioContext';
+import { usePortfolio } from '@/context/PortfolioContext';
 
 const tools = [
   {
