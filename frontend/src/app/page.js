@@ -6,10 +6,7 @@ import {
   Play, Code, Award, Video, TrendingUp, Sparkles, 
   ArrowRight, Heart, Users, Calendar, ArrowUpRight,
   Film, Eye, X
-} from 'lucide-react';
 import { usePortfolio } from '@/context/PortfolioContext';
-
-import { getMediaUrl } from '@/utils/mediaUtils';
 
 // Animation variants
 const containerVariants = {
@@ -35,7 +32,7 @@ export default function HomePage() {
   const [selectedMedia, setSelectedMedia] = useState(null);
 
   const handleMediaClick = (work) => {
-    const targetUrl = work.video_file || work.videoUrl || work.link;
+    const targetUrl = work.video || work.link;
     if (targetUrl && (targetUrl.includes('instagram.com') || targetUrl.includes('youtube.com') || targetUrl.includes('youtu.be'))) {
       window.open(targetUrl, '_blank');
     } else {
@@ -165,7 +162,7 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {featuredReels.map((reel) => {
-            const hasVideo = !!(reel.video_file || reel.videoUrl);
+            const hasVideo = !!reel.video;
             return (
             <motion.div 
               key={reel.id}
@@ -181,7 +178,7 @@ export default function HomePage() {
                   {hasVideo ? (
                     <video 
                       className={`w-full h-full object-cover transition-transform duration-700 ${hoveredReel === reel.id ? 'scale-105' : 'opacity-80'}`}
-                      src={getMediaUrl(reel.video_file || reel.videoUrl || reel.link, 'video')} 
+                      src={reel.video} 
                       autoPlay={hoveredReel === reel.id} 
                       loop 
                       muted 
@@ -196,7 +193,7 @@ export default function HomePage() {
                     />
                   ) : null}
                   <img 
-                    src={getMediaUrl(reel.thumbnail_file || reel.thumbnail || reel.link, 'image')} 
+                    src={reel.thumbnail} 
                     alt={reel.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" 
                     style={{ display: hasVideo ? 'none' : 'block' }}
@@ -287,7 +284,7 @@ export default function HomePage() {
                 
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border border-white/10">
-                    <img src={getMediaUrl(social.thumbnail_file || social.thumbnail || social.link, 'image')} alt={social.title} className="w-full h-full object-cover" />
+                    <img src={social.thumbnail} alt={social.title} className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h3 className="text-white font-bold uppercase text-sm group-hover:text-purple-400 transition-colors line-clamp-1">{social.title}</h3>
@@ -400,7 +397,7 @@ export default function HomePage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-glow-blue opacity-0 group-hover:opacity-20 transition-opacity rounded-full -mr-16 -mt-16" />
                 <div className="flex items-start gap-4">
                   <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-purple-500/30 flex-shrink-0">
-                    <img src={getMediaUrl(testimonial.avatar_file || testimonial.avatar, 'image') || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150'} alt={testimonial.name} className="w-full h-full object-cover" />
+                    <img src={testimonial.avatar || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150'} alt={testimonial.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <h4 className="text-white text-lg font-bold uppercase tracking-wide">{testimonial.name}</h4>
@@ -461,10 +458,10 @@ export default function HomePage() {
                 <X className="w-5 h-5" />
               </button>
               
-              {!!(selectedMedia.video_file || selectedMedia.videoUrl) ? (
+              {!!(selectedMedia.video) ? (
                 <>
                   <video 
-                    src={getMediaUrl(selectedMedia.video_file || selectedMedia.videoUrl || selectedMedia.link, 'video')} 
+                    src={selectedMedia.video} 
                     controls 
                     autoPlay 
                     className="w-full h-full object-contain"
@@ -476,7 +473,7 @@ export default function HomePage() {
                     }}
                   />
                   <img 
-                    src={getMediaUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
+                    src={selectedMedia.thumbnail} 
                     alt={selectedMedia.title} 
                     className="w-full h-full object-contain"
                     style={{ display: 'none' }}
@@ -484,7 +481,7 @@ export default function HomePage() {
                 </>
               ) : (
                 <img 
-                  src={getMediaUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
+                  src={selectedMedia.thumbnail} 
                   alt={selectedMedia.title} 
                   className="w-full h-full object-contain"
                 />

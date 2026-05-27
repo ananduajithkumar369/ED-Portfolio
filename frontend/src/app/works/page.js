@@ -13,8 +13,6 @@ const categories = [
   'Social Media Management'
 ];
 
-import { getMediaUrl } from '@/utils/mediaUtils';
-
 export default function WorksPage() {
   const { getAllWorks } = usePortfolio();
   const [selectedCategory, setSelectedCategory] = useState('Reel Editing');
@@ -22,7 +20,7 @@ export default function WorksPage() {
   const [selectedMedia, setSelectedMedia] = useState(null);
 
   const handleMediaClick = (work) => {
-    const targetUrl = work.video_file || work.videoUrl || work.link;
+    const targetUrl = work.video || work.link;
     if (targetUrl && (targetUrl.includes('instagram.com') || targetUrl.includes('youtube.com') || targetUrl.includes('youtu.be'))) {
       window.open(targetUrl, '_blank');
     } else {
@@ -88,7 +86,7 @@ export default function WorksPage() {
       >
         <AnimatePresence mode="popLayout">
           {filteredWorks.map((work) => {
-            const hasVideo = !!(work.video_file || work.videoUrl);
+            const hasVideo = !!work.video;
             
             return (
               <motion.div
@@ -108,7 +106,7 @@ export default function WorksPage() {
                   {hasVideo ? (
                     <video 
                       className={`w-full h-full object-cover transition-transform duration-700 ${hoveredCard === work.id ? 'scale-105' : 'opacity-80'}`}
-                      src={getMediaUrl(work.video_file || work.videoUrl || work.link, 'video')} 
+                      src={work.video} 
                       autoPlay={hoveredCard === work.id} 
                       loop 
                       muted 
@@ -122,7 +120,7 @@ export default function WorksPage() {
                     />
                   ) : null}
                   <img 
-                    src={getMediaUrl(work.thumbnail_file || work.thumbnail || work.link, 'image')} 
+                    src={work.thumbnail} 
                     alt={work.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
                     style={{ display: hasVideo ? 'none' : 'block' }}
@@ -215,10 +213,10 @@ export default function WorksPage() {
                 <X className="w-5 h-5" />
               </button>
               
-              {!!(selectedMedia.video_file || selectedMedia.videoUrl) ? (
+              {!!(selectedMedia.video) ? (
                 <>
                   <video 
-                    src={getMediaUrl(selectedMedia.video_file || selectedMedia.videoUrl || selectedMedia.link, 'video')} 
+                    src={selectedMedia.video} 
                     controls 
                     autoPlay 
                     className="w-full h-full object-contain"
@@ -230,7 +228,7 @@ export default function WorksPage() {
                     }}
                   />
                   <img 
-                    src={getMediaUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
+                    src={selectedMedia.thumbnail} 
                     alt={selectedMedia.title} 
                     className="w-full h-full object-contain"
                     style={{ display: 'none' }}
@@ -238,7 +236,7 @@ export default function WorksPage() {
                 </>
               ) : (
                 <img 
-                  src={getMediaUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
+                  src={selectedMedia.thumbnail} 
                   alt={selectedMedia.title} 
                   className="w-full h-full object-contain"
                 />
