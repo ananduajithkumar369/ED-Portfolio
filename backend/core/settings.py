@@ -20,6 +20,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if it exists
+load_dotenv(BASE_DIR / '.env')
+
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api

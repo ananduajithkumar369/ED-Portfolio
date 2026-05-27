@@ -8,10 +8,6 @@ from cloudinary.models import CloudinaryField
 class BaseWork(models.Model):
     title = models.CharField(max_length=200)
     category = models.CharField(max_length=100)
-
-    # Cloudinary replaces all local image fields
-    thumbnail = CloudinaryField('image', blank=True, null=True)
-
     reach = models.CharField(max_length=50, blank=True)
     engagement = models.CharField(max_length=50, blank=True)
     link = models.URLField(max_length=500, blank=True)
@@ -30,7 +26,11 @@ class BaseWork(models.Model):
 # REELS (VIDEO)
 # -------------------------
 class Reel(BaseWork):
-    video = CloudinaryField('video', blank=True, null=True)
+    video = CloudinaryField(
+    resource_type='video',
+    blank=True,
+    null=True
+)
 
     def __str__(self):
         return f"Reel: {self.title}"
@@ -40,6 +40,7 @@ class Reel(BaseWork):
 # SOCIAL
 # -------------------------
 class Social(BaseWork):
+    thumbnail = CloudinaryField('image', blank=True, null=True)
     def __str__(self):
         return f"Social: {self.title}"
 
