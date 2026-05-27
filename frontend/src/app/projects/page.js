@@ -6,6 +6,7 @@ import {
   Code, Github, ExternalLink, Cpu, Database, 
   Terminal, Sparkles, FolderGit, Layout 
 } from 'lucide-react';
+import { getMediaUrl } from '@/utils/mediaUtils';
 
 const filters = [
   'All',
@@ -101,7 +102,7 @@ export default function ProjectsPage() {
                 {/* Visual Header / Image Preview with Overlay */}
                 <div className="h-44 relative bg-black overflow-hidden flex items-center justify-center">
                   <img 
-                    src={project.thumbnail_file || project.thumbnail} 
+                    src={getMediaUrl(project.thumbnail_file || project.thumbnail, 'image')} 
                     alt={project.title} 
                     className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
                   />

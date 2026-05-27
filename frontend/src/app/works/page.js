@@ -13,18 +13,7 @@ const categories = [
   'Social Media Management'
 ];
 
-const getDirectUrl = (url, type = 'image') => {
-  if (!url) return '';
-  const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (driveMatch) {
-    if (type === 'video') {
-      return `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
-    } else {
-      return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1000`;
-    }
-  }
-  return url;
-};
+import { getMediaUrl } from '@/utils/mediaUtils';
 
 export default function WorksPage() {
   const { getAllWorks } = usePortfolio();
@@ -119,19 +108,25 @@ export default function WorksPage() {
                   {hasVideo ? (
                     <video 
                       className={`w-full h-full object-cover transition-transform duration-700 ${hoveredCard === work.id ? 'scale-105' : 'opacity-80'}`}
-                      src={getDirectUrl(work.video_file || work.videoUrl || work.link, 'video')} 
+                      src={getMediaUrl(work.video_file || work.videoUrl || work.link, 'video')} 
                       autoPlay={hoveredCard === work.id} 
                       loop 
                       muted 
                       playsInline 
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        if (e.target.nextSibling) {
+                          e.target.nextSibling.style.display = 'block';
+                        }
+                      }}
                     />
-                  ) : (
-                    <img 
-                      src={getDirectUrl(work.thumbnail_file || work.thumbnail || work.link, 'image')} 
-                      alt={work.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" 
-                    />
-                  )}
+                  ) : null}
+                  <img 
+                    src={getMediaUrl(work.thumbnail_file || work.thumbnail || work.link, 'image')} 
+                    alt={work.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
+                    style={{ display: hasVideo ? 'none' : 'block' }}
+                  />
 
                   {/* Top tags */}
                   <div className="absolute top-3 left-3 px-2 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/10 text-[8px] font-black uppercase text-gray-300 tracking-wider">
@@ -221,15 +216,29 @@ export default function WorksPage() {
               </button>
               
               {!!(selectedMedia.video_file || selectedMedia.videoUrl) ? (
-                <video 
-                  src={getDirectUrl(selectedMedia.video_file || selectedMedia.videoUrl || selectedMedia.link, 'video')} 
-                  controls 
-                  autoPlay 
-                  className="w-full h-full object-contain"
-                />
+                <>
+                  <video 
+                    src={getMediaUrl(selectedMedia.video_file || selectedMedia.videoUrl || selectedMedia.link, 'video')} 
+                    controls 
+                    autoPlay 
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      if (e.target.nextSibling) {
+                        e.target.nextSibling.style.display = 'block';
+                      }
+                    }}
+                  />
+                  <img 
+                    src={getMediaUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
+                    alt={selectedMedia.title} 
+                    className="w-full h-full object-contain"
+                    style={{ display: 'none' }}
+                  />
+                </>
               ) : (
                 <img 
-                  src={getDirectUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
+                  src={getMediaUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
                   alt={selectedMedia.title} 
                   className="w-full h-full object-contain"
                 />

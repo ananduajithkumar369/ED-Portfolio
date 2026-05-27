@@ -9,18 +9,7 @@ import {
 } from 'lucide-react';
 import { usePortfolio } from '@/context/PortfolioContext';
 
-const getDirectUrl = (url, type = 'image') => {
-  if (!url) return '';
-  const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (driveMatch) {
-    if (type === 'video') {
-      return `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
-    } else {
-      return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1000`;
-    }
-  }
-  return url;
-};
+import { getMediaUrl } from '@/utils/mediaUtils';
 
 // Animation variants
 const containerVariants = {
@@ -192,19 +181,26 @@ export default function HomePage() {
                   {hasVideo ? (
                     <video 
                       className={`w-full h-full object-cover transition-transform duration-700 ${hoveredReel === reel.id ? 'scale-105' : 'opacity-80'}`}
-                      src={getDirectUrl(reel.video_file || reel.videoUrl || reel.link, 'video')} 
+                      src={getMediaUrl(reel.video_file || reel.videoUrl || reel.link, 'video')} 
                       autoPlay={hoveredReel === reel.id} 
                       loop 
                       muted 
                       playsInline 
+                      onError={(e) => {
+                        // Fallback to thumbnail if video fails to load due to ORB or 404
+                        e.target.style.display = 'none';
+                        if (e.target.nextSibling) {
+                          e.target.nextSibling.style.display = 'block';
+                        }
+                      }}
                     />
-                  ) : (
-                    <img 
-                      src={getDirectUrl(reel.thumbnail_file || reel.thumbnail || reel.link, 'image')} 
-                      alt={reel.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" 
-                    />
-                  )}
+                  ) : null}
+                  <img 
+                    src={getMediaUrl(reel.thumbnail_file || reel.thumbnail || reel.link, 'image')} 
+                    alt={reel.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" 
+                    style={{ display: hasVideo ? 'none' : 'block' }}
+                  />
                   
                   {reel.reach && (
                     <div className="absolute top-3 right-3 px-2.5 py-1 rounded bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-black uppercase text-purple-400 tracking-wider">
@@ -291,7 +287,7 @@ export default function HomePage() {
                 
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border border-white/10">
-                    <img src={getDirectUrl(social.thumbnail_file || social.thumbnail || social.link, 'image')} alt={social.title} className="w-full h-full object-cover" />
+                    <img src={getMediaUrl(social.thumbnail_file || social.thumbnail || social.link, 'image')} alt={social.title} className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h3 className="text-white font-bold uppercase text-sm group-hover:text-purple-400 transition-colors line-clamp-1">{social.title}</h3>
@@ -404,7 +400,7 @@ export default function HomePage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-glow-blue opacity-0 group-hover:opacity-20 transition-opacity rounded-full -mr-16 -mt-16" />
                 <div className="flex items-start gap-4">
                   <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-purple-500/30 flex-shrink-0">
-                    <img src={getDirectUrl(testimonial.avatar_file || testimonial.avatar, 'image') || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150'} alt={testimonial.name} className="w-full h-full object-cover" />
+                    <img src={getMediaUrl(testimonial.avatar_file || testimonial.avatar, 'image') || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150'} alt={testimonial.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <h4 className="text-white text-lg font-bold uppercase tracking-wide">{testimonial.name}</h4>
@@ -466,15 +462,29 @@ export default function HomePage() {
               </button>
               
               {!!(selectedMedia.video_file || selectedMedia.videoUrl) ? (
-                <video 
-                  src={getDirectUrl(selectedMedia.video_file || selectedMedia.videoUrl || selectedMedia.link, 'video')} 
-                  controls 
-                  autoPlay 
-                  className="w-full h-full object-contain"
-                />
+                <>
+                  <video 
+                    src={getMediaUrl(selectedMedia.video_file || selectedMedia.videoUrl || selectedMedia.link, 'video')} 
+                    controls 
+                    autoPlay 
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      if (e.target.nextSibling) {
+                        e.target.nextSibling.style.display = 'block';
+                      }
+                    }}
+                  />
+                  <img 
+                    src={getMediaUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
+                    alt={selectedMedia.title} 
+                    className="w-full h-full object-contain"
+                    style={{ display: 'none' }}
+                  />
+                </>
               ) : (
                 <img 
-                  src={getDirectUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
+                  src={getMediaUrl(selectedMedia.poster_file || selectedMedia.thumbnail_file || selectedMedia.thumbnail || selectedMedia.link, 'image')} 
                   alt={selectedMedia.title} 
                   className="w-full h-full object-contain"
                 />
